@@ -7,3 +7,13 @@ body,
     height: 70vh;
     overflow: auto;
 }
+.menu-item{
+    font-weight: bold;
+    text-transform: uppercase;    
+    text-decoration: none !important; 
+}
+.menu-item.active{
+    color: white; 
+    border-bottom: 2px solid #fff;
+    border-radius: 2px;
+}

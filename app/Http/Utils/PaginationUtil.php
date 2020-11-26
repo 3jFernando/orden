@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 class PaginationUtil
 {
 
-  public static function startPagination($data, $perPage = 10)
+  public static function startPagination($data, $perPage = 7)
   {
     // nueva coleccionar para aceder a los metodos    
     $items = Collection::make($data);

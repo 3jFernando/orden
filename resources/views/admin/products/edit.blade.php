@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('menu-active4', 'active')
 
 @section('content')
     <h2>Editar producto: {{ $product->name }}</h2>

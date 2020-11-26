@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('menu-active3', 'active')
 
 @section('content')
     <h2>Detalles de la COMPRA::{{ $purchase->id }} </h2>

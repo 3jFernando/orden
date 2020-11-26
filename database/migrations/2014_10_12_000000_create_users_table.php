@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
 
             $table->string("name");
             $table->string("bio");
-            $table->string("image");
+            $table->string("image")->default('default.png');
 
             $table->timestamps();
         });

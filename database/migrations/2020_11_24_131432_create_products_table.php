@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->foreignId('category_id')->references('id')->on('categories');
 
             $table->string('name');
-            $table->string('image')->default('default.png');
+            $table->string('image')->default('products/default.png');
             $table->string('reference')->default('prod-'.rand(34334, 55656));
             $table->integer('quantity')->default(0);
             $table->float('price_purchase', 12, 2)->default(0);

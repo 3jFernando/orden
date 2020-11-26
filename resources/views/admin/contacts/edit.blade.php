@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('menu-active5', 'active')
 
 @section('content')
     <h2>Editar contacto: {{ $contact->name}}</h2>

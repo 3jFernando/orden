@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('menu-active2', 'active')
 
 @section('content')
     <h2>Historial de ventas</h2>

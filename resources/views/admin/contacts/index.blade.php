@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('menu-active5', 'active')
 
 @section('content')
     <h2>Historial de contactos</h2>
