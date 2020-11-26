@@ -24,6 +24,8 @@ window.Vue = require('vue');
 // globales
 Vue.component('v-pagination', pagination);
 Vue.component('v-modal', require('./components/Modal.vue').default);
+// home filtros
+Vue.component('v-home-filters', require('./components/home/HomeFilters').default);
 // ventas
 Vue.component('v-products-list-in-new-sale', require('./components/products/ListInNewSale.vue').default);
 Vue.component('v-products--sales-carshop', require('./components/sales/CarShop.vue').default);

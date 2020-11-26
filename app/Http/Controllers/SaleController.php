@@ -6,9 +6,12 @@ use App\Http\Utils\PaginationUtil;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleProduct;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mockery\CountValidator\Exact;
+use PhpParser\Node\Expr\Throw_;
+use Psy\Exception\ThrowUpException;
 
 class SaleController extends Controller
 {
@@ -59,11 +62,11 @@ class SaleController extends Controller
             'total' => 'integer|required',
         ]);
 
-        // validar productos
-        $products = json_decode($request->products);
-        if(!count($products)) return redirect()->route('sales.create')->with('danger', 'Debes seleccionar por lo menos un producto.');
-
         try { 
+
+            // validar productos
+            $products = json_decode($request->products);
+            if(!count($products)) throw new Exception("Debes seleccionar por lo menos un producto.");        
 
             DB::beginTransaction();
 
@@ -79,9 +82,21 @@ class SaleController extends Controller
             $totalUtility = 0;
             foreach ($products as $product) {
 
+                // actualziar el stock
+                $itemStock = Product::find($product->id);
+
+                // validar que la cnatidad en stock cubra lo que se quiere vender
+                if ($itemStock->quantity < $product->quantity_stock) {
+                    throw new Exception("La cantidad en inventario del producto $product->name no es suficiente para cubrir lo que se desea vender (cantidad en stock $itemStock->quantity, cantidad a vender $product->quantity_stock)");
+                }
+
+                // ajustar stock
+                $itemStock->quantity -= $product->quantity_stock;
+                $itemStock->save();
+                        
+
                 // crear el detalle
                 $saleProduct = new SaleProduct();
-
                 $saleProduct->sale_id = $sale->id;
                 $saleProduct->product_id = $product->id;
                 $saleProduct->quantity = $product->quantity_stock;
@@ -91,12 +106,7 @@ class SaleController extends Controller
                 $saleProduct->save();
 
                 // utilidad
-                $totalUtility += $saleProduct->utility;
-
-                // actualziar el stock
-                $itemStock = Product::find($product->id);                
-                $itemStock->quantity -= $saleProduct->quantity;
-                $itemStock->save();
+                $totalUtility += $saleProduct->utility;                
 
             }
 
@@ -106,9 +116,13 @@ class SaleController extends Controller
             DB::commit();
             return redirect()->route('sales.index')->with('success', 'Venta creada con exito.');
 
-        } catch(\Exception $e) {
+        } catch(Exception $e) {
             DB::rollBack();
-            return redirect()->route('sales.index')->with('danger', 'Problemas al crear la venta.'. $e->getMessage());
+            return redirect()->route('sales.create')
+                ->with('danger', 'Problemas al crear la venta.' . $e->getMessage())
+                ->with('total', $request->total)
+                ->with('products', $request->products)
+                ->with('contact_id', $request->contact_id);
         }
     }
 

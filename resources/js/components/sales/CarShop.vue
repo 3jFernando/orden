@@ -108,7 +108,21 @@ export default {
             total: 0,
         };
     },
-    methods: {   
+    created() {
+        this.validSessionErrors();
+    },
+    methods: { 
+        /**
+         * Validar si hay sessiones de errors
+         *  */  
+        validSessionErrors() {
+
+            const sessionTotal = document.querySelector('#sale-total').value;
+            const sessionProducts = JSON.parse(document.querySelector('#sale-products').value);
+
+            this.total = sessionTotal; // total
+            this.products = sessionProducts; // productos
+        },
         /**
          * Formatera los valores de monedas
          */

@@ -12,7 +12,8 @@ use App\Http\Controllers\{
     HomeController
 };
 use App\Http\Controllers\Api\v1\{
-    ProductController as ApiProductController
+    ProductController as ApiProductController,
+    HomeController as ApiHomeController,
 };
 
 Route::get('/', [HomeController::class, 'index'])->name('admin.index');
@@ -55,6 +56,9 @@ Route::group(['middleware' => 'auth'], function() {
      * version: v1
      */
     Route::group(['prefix' => 'api/v1'], function() {
+
+        // filtros home
+        Route::post('/home-filters', [ApiHomeController::class, 'home'])->name('admin.filtersHome');
 
         // productos
         Route::get('/products', [ApiProductController::class, 'load'])->name('products.load');

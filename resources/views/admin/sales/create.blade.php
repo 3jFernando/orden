@@ -22,7 +22,7 @@
                 @foreach ($contacts as $contact)
                     <option 
                         value="{{$contact->id}}"
-                        {{ old('contact_id') == $contact->id ? 'selected' : '' }}
+                        {{ old('contact_id') == $contact->id ? 'selected' : ( session('contact_id') ? ( session('contact_id') == $contact->id ? 'selected' : '' ) : '' ) }}
                     >{{ $contact->name }}</option>
                 @endforeach
 
@@ -39,12 +39,12 @@
         <input
             type="hidden" 
             id="sale-total"
-            value="{{ old('total') ? old('total') : 0 }}" 
+            value="{{ old('total') ? old('total') : ( session('total') ? session('total') : 0 ) }}" 
             name="total" >
         <input
             type="hidden" 
             id="sale-products"
-            value="{{ old('products') ? old('products') : json_encode([]) }}" 
+            value="{{ old('products') ? old('products') : ( session('products') ? session('products') : json_encode([]) ) }}" 
             name="products" >
 
         <button type="submit" class="btn btn-dark text-uppercase">Generar venta</button>

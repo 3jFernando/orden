@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,20 +24,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-
-        $salesToDay = 0;
-        $purchasesToDay = 0;
-        $utilityToDay = 0;
-        
-        $sales = auth()->user()->shop->sales;
-        foreach ($sales as $sale) {
-            $salesToDay += (float)$sale->total;
-            $utilityToDay += (float)$sale->total_utility;
-        }
-
-        $purchases = auth()->user()->shop->purchases;
-        foreach ($purchases as $purchase) $purchasesToDay += (float)$purchase->total;
-
-        return view('admin.home', compact('salesToDay', 'purchasesToDay', 'utilityToDay'));
+        $since = Carbon::now()->format('Y-m-d');
+        $until = Carbon::now()->format('Y-m-d');
+        return view('admin.home', compact('since', 'until'));
     }
+
 }
