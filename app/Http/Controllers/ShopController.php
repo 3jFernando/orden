@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shop;
+use Exception;
 use Illuminate\Http\Request;
 
 class ShopController extends Controller
@@ -57,7 +58,7 @@ class ShopController extends Controller
      */
     public function edit(Shop $shop)
     {
-        return $shop;
+        return view('admin.shops.edit', compact('shop'));
     }
 
     /**
@@ -69,7 +70,32 @@ class ShopController extends Controller
      */
     public function update(Request $request, Shop $shop)
     {
-        //
+
+        $data = $request->validate([
+            'name' => 'string|required|min:3',
+            'bio' => 'string|required|min:20|max:255',
+        ]);
+
+        try {
+
+            $shop->name = $data['name'];
+            $shop->bio = $data['bio'];
+
+            // verificar la imagen          
+            $file = $request->file('image');  
+            if($file) {
+                $nameFile = $file->store('shops', 'public');
+                $shop->image = $nameFile;
+            }
+            
+            $shop->save();
+
+            return back()->with('success', 'Los datos de tu Tienda ' . $shop->name . ' se guardaron con exito.');
+
+        } catch(Exception $e) {
+            return redirect()->route('shops.edit', ['shop' => $shop->id])->with('success', 'Los datos de tu Tienda ' . $shop->name . ' se guardaron con exito.');
+        }
+        
     }
 
     /**

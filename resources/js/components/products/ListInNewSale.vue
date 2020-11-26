@@ -29,6 +29,10 @@
             </div>
         </div>
 
+        <div v-if="loading" class="my-2">
+            <v-loading />
+        </div>
+
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -56,7 +60,7 @@
                             <i>{{ product.reference }}</i>
                         </td>
                         <td v-text="product.quantity"></td>
-                        <td>{{ numberFormatCurrency(product.price_sale) }}</td>
+                        <td>{{ numberFormatCurrency(action == 'sale' ? product.price_sale : product.price_purchase) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -96,6 +100,7 @@ export default {
         return {
             products: {},
             search: "",
+            loading: false,
             // paginacion
             page: 1,
             perPage: 10
@@ -115,14 +120,15 @@ export default {
          * Cargar productos
          */
         async load(page = 1) {
+            this.loading = true;
             await axios
                 .get(`/api/v1/products?action=${this.action}&page=${page}`)
                 .then(response => {
                     this.products = response.data.data;
                 })
                 .catch(e => {
-                    console.log(e);
-                });
+                    alert("Error al cargar o realizar la busqueda");
+                }).finally(() => this.loading = false);
         },
         /**
          * Agrear producto seleciondo
@@ -139,7 +145,8 @@ export default {
                     productExists = true;
                     
                     x.quantity_stock += 1;
-                    x.total = ( parseFloat(x.price_sale) * x.quantity_stock );
+                    // price: action=sale: price_sale, action=purchase: price_purchase
+                    x.total = ( parseFloat( (this.action=='sale') ? x.price_sale : x.price_purchase ) * x.quantity_stock );
                     
                 }
                 return [...this.$parent.$parent.products, x]
@@ -150,7 +157,8 @@ export default {
 
                 // crear las propiedes nueva (cantidad a vender, total dpor producto)
                 product.quantity_stock = 1;
-                product.total = product.price_sale;
+                // price: action=sale: price_sale, action=purchase: price_purchase
+                product.total = (this.action=='sale') ? product.price_sale : product.price_purchase;
                 //agregar al carShop
                 this.itemCarShop.push(product);                
 
@@ -173,6 +181,7 @@ export default {
                 return false;
             }
 
+            this.loading = true;
             await axios
                 .post("/api/v1/products/search", {
                     search: this.search,
@@ -183,7 +192,7 @@ export default {
                 })
                 .catch(e => {
                     alert("Error al realizar la busqueda ", e.response.status);
-                });
+                }).finally(() => this.loading = false);
         }
     }
 };

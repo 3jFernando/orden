@@ -57,6 +57,7 @@
                             name="price_purchase" 
                             id="price_purchase"
                             v-model="product.price_purchase"
+                            v-on:change="calculeTotalItem(product)"
                             value="0"
                             style="width: 120px; text-align: center;"
                             class="form-control "
@@ -118,7 +119,21 @@ export default {
             total: 0,
         };
     },
-    methods: {   
+    created() {
+        this.validSessionErrors();
+    },
+    methods: { 
+        /**
+         * Validar si hay sessiones de errors
+         *  */  
+        validSessionErrors() {
+
+            const sessionTotal = document.querySelector('#total').value;
+            const sessionProducts = JSON.parse(document.querySelector('#products').value);
+
+            this.total = sessionTotal; // total
+            this.products = sessionProducts; // productos
+        },
         /**
          * Formatera los valores de monedas
          */
@@ -162,14 +177,27 @@ export default {
             this.calculeTotals();
         },
         /**
-         * Calcular total de la purchase
+         * Calcular total de total los productos
          */
         calculeTotals() {
             this.total = 0;
             this.products.map(x => this.total += parseFloat(x.total));
 
-            document.querySelector('#purchase-total').value = this.total; // total
-            document.querySelector('#purchase-products').value = JSON.stringify(this.products); // productos
+            document.querySelector('#total').value = this.total; // total
+            document.querySelector('#products').value = JSON.stringify(this.products); // productos
+        },
+        /**
+         * Calcular total por producto
+         */
+        calculeTotalItem(product) {
+            this.products = this.products.filter((x,index) => {
+
+                // precio total
+                if(x.id === product.id)  product.total = ( parseFloat(product.price_purchase) * product.quantity_stock ); 
+
+                return [...this.products, product];
+            });
+            this.calculeTotals();
         }
     }
 };

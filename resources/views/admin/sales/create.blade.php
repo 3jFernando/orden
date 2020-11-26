@@ -38,12 +38,12 @@
 
         <input
             type="hidden" 
-            id="sale-total"
+            id="total"
             value="{{ old('total') ? old('total') : ( session('total') ? session('total') : 0 ) }}" 
             name="total" >
         <input
             type="hidden" 
-            id="sale-products"
+            id="products"
             value="{{ old('products') ? old('products') : ( session('products') ? session('products') : json_encode([]) ) }}" 
             name="products" >
 

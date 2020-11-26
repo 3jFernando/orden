@@ -24,17 +24,18 @@
           @foreach ($contacts as $contact)
             <tr>
               <td>
-                
-                <a href="{{ route('contacts.edit', ['contact' => $contact->id]) }}" class="text-info font-weight-bold">Detales</a>
-                <form 
-                  action="{{ route('contacts.destroy', ['contact' => $contact->id]) }}"
-                  method="POST"
-                  >
-                  @csrf
-                  @method('DELETE')
-                  <button class="btn btn-sm btn-danger" type="submit">&times;</button>
-                </form>
-                
+                <div class="d-flex justify-content-start align-items-center">
+                  <a href="{{ route('contacts.edit', ['contact' => $contact->id]) }}" 
+                    class="btn btn-sm btn-outline-dark font-weight-bold mr-2">Detales</a>
+                  <form 
+                    action="{{ route('contacts.destroy', ['contact' => $contact->id]) }}"
+                    method="POST"
+                    >
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-sm btn-outline-danger font-weight-bold" type="submit">&times;</button>
+                  </form>
+                </div>
               </td>
               <td>{{$contact->name}}</td>
               <td>{{$contact->type->name}}</td>

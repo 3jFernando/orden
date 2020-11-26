@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Product;
 use App\Models\Purchase;
 use Illuminate\Http\Request;
-use App\Http\Utils\PaginationUtil;
 use App\Models\PurchaseProduct;
+use App\Http\Utils\PaginationUtil;
 use Illuminate\Support\Facades\DB;
 
 class PurchaseController extends Controller
@@ -56,12 +57,12 @@ class PurchaseController extends Controller
             'total' => 'integer|required',
         ]);
 
-        // validar productos
-        $products = json_decode($request->products);
-        if(!count($products)) return redirect()->route('purchases.create')->with('danger', 'Debes seleccionar por lo menos un producto.');
-
         try { 
 
+            // validar productos
+            $products = json_decode($request->products);
+            if(!count($products)) throw new Exception("Debes seleccionar por lo menos un producto.");        
+        
             DB::beginTransaction();
 
             // crear la venta
@@ -101,9 +102,13 @@ class PurchaseController extends Controller
             DB::commit();
             return redirect()->route('purchases.index')->with('success', 'Compra creada con exito.');
 
-        } catch(\Exception $e) {
+        } catch(Exception $e) {
             DB::rollBack();
-            return redirect()->route('purchases.index')->with('danger', 'Problemas al crear la Compra.'. $e->getMessage());
+            return redirect()->route('purchases.create')
+                ->with('danger', 'Problemas al crear la Compra.'. $e->getMessage())
+                ->with('total', $request->total)
+                ->with('products', $request->products)
+                ->with('contact_id', $request->contact_id);
         }
     }
 

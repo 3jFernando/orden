@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Utils\PaginationUtil;
 use App\Models\Product;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -32,7 +33,7 @@ class ProductController extends Controller
             foreach ($items as $item) array_push($productsData, $item);
         }
 
-        $products = PaginationUtil::startPagination($productsData, 5);        
+        $products = PaginationUtil::startPagination($productsData, 7);        
 
         return view('admin.products.index', compact('products'));
     }
@@ -104,9 +105,28 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $categories = auth()->user()->shop->categories;
-        return view('admin.products.edit', compact('categories', 'product'));
+    
+        $categories = auth()->user()->shop->categories; // categorias
+        
+        // historia de compras
+        $historyPurchases = [];
+        foreach (auth()->user()->shop->purchases ?? [] as $purchase) {
+            foreach ($purchase->products as $item) array_push($historyPurchases, $item);
+        }
+        rsort($historyPurchases);
+        $historyPurchases = PaginationUtil::startPagination($historyPurchases);
+
+        // historia de compras
+        $historySales = [];
+        foreach (auth()->user()->shop->sales ?? [] as $sale) {
+            foreach ($sale->products as $item) array_push($historySales, $item);
+        }
+        rsort($historySales);
+        $historySales = PaginationUtil::startPagination($historySales);
+
+        return view('admin.products.edit', compact('categories', 'product', 'historyPurchases', 'historySales'));
     }
+
 
     /**
      * Update the specified resource in storage.

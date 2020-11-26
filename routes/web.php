@@ -22,6 +22,7 @@ Route::group(['middleware' => 'auth'], function() {
 
     // tienda
     Route::get('/shops/{shop}/edit', [ShopController::class, 'edit'])->name('shops.edit');
+    Route::put('/shops/{shop}', [ShopController::class, 'update'])->name('shops.update');
 
     // ventas
     Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');

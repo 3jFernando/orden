@@ -29,7 +29,11 @@
                                         href="{{ route('products.edit', ['product' => $product->product_id]) }}">
                                         VER
                                     </a>
-                                    <div class="ml-3">
+                                    <div class="mx-2">
+                                        <img class="rounded-circle" width="35" height="35"
+                                            src="{{ asset("storage/".$product->product->image) }}" alt="{{ $product->product->name }}">
+                                    </div>
+                                    <div>
                                         <b>{{ $product->product->name }}</b><br />
                                         <i>{{ $product->product->reference }}</i>
                                     </div>

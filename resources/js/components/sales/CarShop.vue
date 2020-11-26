@@ -117,8 +117,8 @@ export default {
          *  */  
         validSessionErrors() {
 
-            const sessionTotal = document.querySelector('#sale-total').value;
-            const sessionProducts = JSON.parse(document.querySelector('#sale-products').value);
+            const sessionTotal = document.querySelector('#total').value;
+            const sessionProducts = JSON.parse(document.querySelector('#products').value);
 
             this.total = sessionTotal; // total
             this.products = sessionProducts; // productos
@@ -172,8 +172,8 @@ export default {
             this.total = 0;
             this.products.map(x => this.total += parseFloat(x.total));
 
-            document.querySelector('#sale-total').value = this.total; // total
-            document.querySelector('#sale-products').value = JSON.stringify(this.products); // productos
+            document.querySelector('#total').value = this.total; // total
+            document.querySelector('#products').value = JSON.stringify(this.products); // productos
         }
     }
 };
