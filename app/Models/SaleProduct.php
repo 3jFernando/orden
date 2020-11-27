@@ -18,6 +18,11 @@ class SaleProduct extends Model
         'utility',
     ];
 
+    public function sales()
+    {
+        return $this->belongsTo(Sale::class);
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);

@@ -17,6 +17,11 @@ class PurchaseProduct extends Model
         'total'
     ];
 
+    public function purchases()
+    {
+        return $this->belongsTo(Purchase::class);
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class);

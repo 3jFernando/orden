@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Utils\PaginationUtil;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\SaleProduct;
 use Illuminate\Http\Request;
+use App\Models\PurchaseProduct;
+use App\Http\Utils\PaginationUtil;
 
 class ProductController extends Controller
 {
@@ -107,22 +109,14 @@ class ProductController extends Controller
     {
     
         $categories = auth()->user()->shop->categories; // categorias
-        
-        // historia de compras
-        $historyPurchases = [];
-        foreach (auth()->user()->shop->purchases ?? [] as $purchase) {
-            foreach ($purchase->products as $item) array_push($historyPurchases, $item);
-        }
-        rsort($historyPurchases);
-        $historyPurchases = PaginationUtil::startPagination($historyPurchases);
 
         // historia de compras
-        $historySales = [];
-        foreach (auth()->user()->shop->sales ?? [] as $sale) {
-            foreach ($sale->products as $item) array_push($historySales, $item);
-        }
-        rsort($historySales);
-        $historySales = PaginationUtil::startPagination($historySales);
+        $dataPurchases = PurchaseProduct::with('purchases')->where('product_id', $product->id)->orderBy('id', 'DESC')->get();         
+        $historyPurchases = PaginationUtil::startPagination($dataPurchases);
+
+        // historia de compras
+        $dataSales = SaleProduct::with('sales')->where('product_id', $product->id)->orderBy('id', 'DESC')->get();        
+        $historySales = PaginationUtil::startPagination($dataSales);
 
         return view('admin.products.edit', compact('categories', 'product', 'historyPurchases', 'historySales'));
     }
